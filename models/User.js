@@ -1,32 +1,30 @@
+// models/User.js
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  nickname: { 
-    type: String, 
-    required: true, 
-    unique: true, // Garantir que o nickname seja único no banco.
-    trim: true // Remove espaços extras no início e no final.
-  },
-  avatar: { 
-    type: String, 
-    required: true, 
-    default: 'default-avatar.png' // Caminho padrão para o avatar.
-  },
-  ciclo: { 
-    type: String, 
-    required: true, 
-    enum: ['folicular', 'luteal', 'ovulatório', 'menstrual'], // Ciclos permitidos.
-    default: 'menstrual' // Valor inicial.
-  },
-  intensidade: { type: String, required: false },
-  
-  tiposTreino: { 
-    type: [String], 
-    required: true, 
-    default: [] // Array vazio como padrão.
-  },
+  email: { type: String, required: true, unique: true, trim: true },
+  senha: { type: String, required: true },
+  nickname: { type: String, required: true, unique: true, trim: true },
+  avatar: { type: String, default: 'default-avatar.png' },
+  peso: { type: Number, required: false },
+  altura: { type: Number, required: false },
+  ciclo: { type: String, enum: ['folicular', 'luteal', 'ovulatório', 'menstrual'], default: 'menstrual' },
+  intensidade: { type: String },
+  tiposTreino: { type: [String], default: [] },
 }, {
-  timestamps: true // Adiciona "createdAt" e "updatedAt" automaticamente.
+  timestamps: true
+});
+
+// Hash da senha antes de salvar o usuário
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('senha')) return next();
+  try {
+    this.senha = await bcrypt.hash(this.senha, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
