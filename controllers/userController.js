@@ -1,5 +1,5 @@
 // controllers/userController.js
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 exports.signup = async (req, res) => {
@@ -11,7 +11,9 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ message: 'Usuário já cadastrado.' });
     }
 
-    const newUser = new User({ email, senha, nickname, avatar });
+    const hashedPassword = await bcrypt.hash(senha, 10);
+
+    const newUser = new User({ email, senha: hashedPassword, nickname, avatar });
     await newUser.save();
 
     res.status(201).json({ message: 'Usuário criado com sucesso!' });
@@ -29,6 +31,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
     }
 
+    // Comparar a senha fornecida com a senha hashada armazenada no banco
     const isMatch = await bcrypt.compare(senha, user.senha);
     if (!isMatch) {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
@@ -59,4 +62,3 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Erro ao atualizar perfil.', error });
   }
 };
-
