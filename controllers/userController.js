@@ -31,7 +31,6 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
     }
 
-    // Comparar a senha fornecida com a senha hashada armazenada no banco
     const isMatch = await bcrypt.compare(senha, user.senha);
     if (!isMatch) {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
