@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Hash da senha antes de salvar o usuário
 userSchema.pre('save', async function (next) {
   if (!this.isModified('senha')) return next();
   try {
