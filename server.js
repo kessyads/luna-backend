@@ -6,7 +6,7 @@ const userRoutes = require('./routes/userRoutes');
 const healthRoutes = require('./routes/healthRoutes');
 const activityRoutes = require('./routes/activityRoutes');
 
-const app = express();
+const app = express();  
 
 app.use(bodyParser.json());
 

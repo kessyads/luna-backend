@@ -1,4 +1,3 @@
-// controllers/activityController.js
 const User = require('../models/User');
 
 exports.updateActivity = async (req, res) => {
